@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "webAppName": {
+            "type": "string",
+            "defaultValue": "ContactDatabaseWebApp",
+            "metadata": {
+                "description": "Name for the Web App"
+            }
+        },
+        "hostingPlanName": {
+            "type": "string",
+            "defaultValue": "ContactDatabaseHostingPlan",
+            "metadata": {
+                "description": "Name for the Hosting Plan"
+            }
+        }
+    },
+    "variables": {
+        "location": "[resourceGroup().location]"
+    },
+"resources": [
+    {
+        "type": "Microsoft.Web/serverfarms",
+        "apiVersion": "2018-02-01",
+        "name": "[parameters('hostingPlanName')]",
+        "location": "[variables('location')]",
+        "sku": {
+            "name": "F1",
+            "capacity": 1
+        },
+        "kind": "app"
+    },
+    {
+        "type": "Microsoft.Web/sites",
+        "apiVersion": "2018-11-01",
+        "name": "[parameters('webAppName')]",
+        "location": "[variables('location')]",
+        "dependsOn": [
+            "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+        ],
+        "properties": {
+            "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]"
+        }
+    }
+],
+"outputs": {
+}
+}
